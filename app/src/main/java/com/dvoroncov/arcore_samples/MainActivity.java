@@ -12,6 +12,8 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.BaseArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -19,7 +21,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 public class MainActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
-    private ModelRenderable renderable;
+    private Renderable renderable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +29,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ar_fragment);
 
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("amenemhat.sfb"))
+        //ModelRenderable.builder()
+        //        .setSource(this, Uri.parse("amenemhat.sfb"))
+        //        .build()
+        //        .thenAccept(renderable -> MainActivity.this.renderable = renderable)
+        //        .exceptionally(throwable -> {
+        //            Toast toast =
+        //                    Toast.makeText(this, "Unable to load amenemhat renderable", Toast.LENGTH_LONG);
+        //            toast.setGravity(Gravity.CENTER, 0, 0);
+        //            toast.show();
+        //            return null;
+        //        });
+
+        ViewRenderable.builder()
+                .setView(this, R.layout.ar_view)
                 .build()
                 .thenAccept(renderable -> MainActivity.this.renderable = renderable)
                 .exceptionally(throwable -> {
@@ -52,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
             AnchorNode anchorNode = new AnchorNode(anchor);
             anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-            TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-            andy.setParent(anchorNode);
-            andy.setRenderable(renderable);
-            andy.select();
+            TransformableNode node = new TransformableNode(arFragment.getTransformationSystem());
+            node.setParent(anchorNode);
+            node.setRenderable(renderable);
+            node.select();
         });
     }
 }
