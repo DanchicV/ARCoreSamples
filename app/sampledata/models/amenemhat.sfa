@@ -35,7 +35,7 @@
       ],
       file: "sampledata/models/amenemhat.obj",
       name: "amenemhat",
-      scale: 0.26935999999999999,
+      scale: 0.1,
       suggested_collision: {
          center: {
             x: 0,
@@ -52,7 +52,7 @@
    },
    samplers: [
       {
-         file: "sampledata/models\\amenemhat.jpg",
+         file: "sampledata/models/amenemhat.jpg",
          name: "amenemhat",
          pipeline_name: "amenemhat.jpg",
       },

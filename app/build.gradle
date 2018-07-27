@@ -43,3 +43,8 @@ sceneform.asset('sampledata/models/amenemhat.obj',
         'default',
         'sampledata/models/amenemhat.sfa',
         'src/main/assets/amenemhat')
+
+sceneform.asset('sampledata/models/planetary_crawler.obj',
+        'default',
+        'sampledata/models/planetary_crawler.sfa',
+        'src/main/assets/planetary_crawler')
