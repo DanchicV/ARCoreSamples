@@ -36,6 +36,6 @@
 
         <meta-data
             android:name="com.google.android.ar.API_KEY"
-            android:value="AIzaSyAApGNds_UYUN0zVL4D8ihNAkmqTJdvoo4" />
+            android:value="" />
     </application>
 </manifest>

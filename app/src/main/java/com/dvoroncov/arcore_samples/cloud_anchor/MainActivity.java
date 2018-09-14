@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Button connectButton;
     private Button cancelButton;
     private TextView shortCodeTextView;
+    private ProgressBar creatingProgressBar;
 
     private StorageManager storageManager;
     private ViewRenderable viewRenderable;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         arFragment = (CloudAnchorArFragment) getSupportFragmentManager().findFragmentById(R.id.ar_fragment);
 
         shortCodeTextView = findViewById(R.id.short_code_text_view);
+        creatingProgressBar = findViewById(R.id.creating_progress);
 
         createButton = findViewById(R.id.create_button);
         createButton.setOnClickListener(v -> onCreateButtonClick());
@@ -75,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
             setNewAnchor(
                     arFragment.getSession().hostCloudAnchor(hitResult.createAnchor())
             );
+            creatingProgressBar.setVisibility(View.VISIBLE);
+            checkCloudAnchorState();
         }
     }
 
@@ -87,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = viewRenderable.getView().findViewById(R.id.ar_text_view);
         button.setOnClickListener(v -> {
             textView.setTextColor(getColor(R.color.colorAccent));
-            checkCloudAnchorState();
         });
 
         node = new TransformableNode(arFragment.getTransformationSystem());
