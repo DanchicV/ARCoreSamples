@@ -6,17 +6,32 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.dvoroncov.arcore_samples.R;
 import com.dvoroncov.arcore_samples.cloud_anchor.utils.StorageManager;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
+import com.google.ar.sceneform.ux.BaseTransformableNode;
+import com.google.ar.sceneform.ux.SelectionVisualizer;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.ar.sceneform.ux.TransformationSystem;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private TransformableNode node;
     private Anchor anchor;
     private AnchorNode anchorNode;
+
+    private Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,36 +91,62 @@ public class MainActivity extends AppCompatActivity {
 
     private void onTapArPlane(HitResult hitResult) {
         if (anchor == null && viewRenderable != null) {
-            viewRenderable.setShadowCaster(true);
             setNewAnchor(
                     arFragment.getSession().hostCloudAnchor(hitResult.createAnchor())
             );
+
+            disposable = Observable.interval(0, TimeUnit.MILLISECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext(aLong -> checkCloudAnchorState())
+                    .subscribe();
             creatingProgressBar.setVisibility(View.VISIBLE);
-            checkCloudAnchorState();
         }
     }
 
     private void setNewAnchor(Anchor newAnchor) {
+        FrameLayout selectedNodeBackground = viewRenderable.getView().findViewById(R.id.selected_node_bg);
+        ToggleButton translationButton = viewRenderable.getView().findViewById(R.id.translation_toggle_button);
+        ToggleButton rotationButton = viewRenderable.getView().findViewById(R.id.rotation_toggle_button);
+        ToggleButton scaleButton = viewRenderable.getView().findViewById(R.id.scale_toggle_button);
+        translationButton.setOnCheckedChangeListener((buttonView, isChecked) -> node.getTranslationController().setEnabled(isChecked));
+        rotationButton.setOnCheckedChangeListener((buttonView, isChecked) -> node.getRotationController().setEnabled(isChecked));
+        scaleButton.setOnCheckedChangeListener((buttonView, isChecked) -> node.getScaleController().setEnabled(isChecked));
+
         anchor = newAnchor;
         anchorNode = new AnchorNode(newAnchor);
         anchorNode.setParent(arFragment.getArSceneView().getScene());
+        TransformationSystem transformationSystem = arFragment.getTransformationSystem();
+        transformationSystem.setSelectionVisualizer(new SelectionVisualizer() {
+            @Override
+            public void applySelectionVisual(BaseTransformableNode node) {
+                if (selectedNodeBackground != null) {
+                    selectedNodeBackground.setVisibility(View.VISIBLE);
+                }
+            }
 
-        Button button = viewRenderable.getView().findViewById(R.id.ar_button);
-        TextView textView = viewRenderable.getView().findViewById(R.id.ar_text_view);
-        button.setOnClickListener(v -> {
-            textView.setTextColor(getColor(R.color.colorAccent));
+            @Override
+            public void removeSelectionVisual(BaseTransformableNode node) {
+                if (selectedNodeBackground != null) {
+                    selectedNodeBackground.setVisibility(View.GONE);
+                }
+            }
         });
 
-        node = new TransformableNode(arFragment.getTransformationSystem());
+        node = new TransformableNode(transformationSystem);
+        node.getTranslationController().setEnabled(false);
+        node.getRotationController().setEnabled(false);
+        node.getScaleController().setEnabled(false);
         node.setParent(anchorNode);
-        node.setRenderable(viewRenderable);
-        node.select();
+
+        Node horizontalViewNode = new Node();
+        horizontalViewNode.setParent(node);
+        horizontalViewNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1f, 0, 0), -90));
+        horizontalViewNode.setRenderable(viewRenderable);
     }
 
     private void checkCloudAnchorState() {
         Anchor.CloudAnchorState state = anchor.getCloudAnchorState();
-        showToast(state.toString());
-
         if (state == Anchor.CloudAnchorState.SUCCESS) {
             String code = anchor.getCloudAnchorId();
             showToast(state.toString() + ": " + code);
@@ -111,6 +154,12 @@ public class MainActivity extends AppCompatActivity {
             int shortCode = storageManager.getNextShortCode();
             storageManager.saveCloudAnchorID(shortCode, anchor.getCloudAnchorId());
             shortCodeTextView.setText(getString(R.string.created, shortCode));
+
+            creatingProgressBar.setVisibility(View.GONE);
+            if (disposable != null) {
+                disposable.dispose();
+                disposable = null;
+            }
         }
     }
 
@@ -158,9 +207,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void onCancelButtonClick() {
         shortCodeTextView.setVisibility(View.GONE);
+        cancelButton.setVisibility(View.GONE);
+        creatingProgressBar.setVisibility(View.GONE);
         createButton.setVisibility(View.VISIBLE);
         connectButton.setVisibility(View.VISIBLE);
-        cancelButton.setVisibility(View.GONE);
 
         // TODO: 13.09.2018 clear anchor
         if (anchorNode != null) {
