@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ARCoreSamples</string>
+
+    <string name="create">Создать</string>
+    <string name="connect">Присоединиться</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="created">Создан: %1$d</string>
+    <string name="connected">Подключен к %1$d</string>
 </resources>

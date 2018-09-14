@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dvoroncov.arcore_samples;
+package com.dvoroncov.arcore_samples.node;
 
 import android.animation.ObjectAnimator;
 import android.support.annotation.Nullable;
