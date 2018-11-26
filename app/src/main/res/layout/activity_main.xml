@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".cloudAnchor.MainActivity">
+    tools:context=".presentation.MainActivity">
 
     <fragment
         android:id="@+id/arFragment"
-        android:name="com.dvoroncov.arcore.cloudAnchor.CloudAnchorArFragment"
+        android:name="com.dvoroncov.arcore.presentation.CloudAnchorArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -16,20 +16,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/createButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="start"
+            android:layout_margin="8dp"
             android:layout_weight="1"
             android:text="@string/create" />
 
@@ -37,9 +37,17 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_margin="8dp"
             android:text="@string/cancel"
             android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/modelsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/models_list_background"
+            android:visibility="gone"
+            tools:listitem="@layout/model_item" />
     </LinearLayout>
 
 </FrameLayout>

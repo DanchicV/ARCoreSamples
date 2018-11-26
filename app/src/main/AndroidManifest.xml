@@ -21,7 +21,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="com.dvoroncov.arcore.cloudAnchor.MainActivity"
+            android:name="com.dvoroncov.arcore.presentation.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

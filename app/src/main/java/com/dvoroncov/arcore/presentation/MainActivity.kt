@@ -1,4 +1,4 @@
-package com.dvoroncov.arcore.cloudAnchor
+package com.dvoroncov.arcore.presentation
 
 import RxBus
 import android.net.Uri
@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dvoroncov.arcore.R
 import com.dvoroncov.arcore.data.CloudAnchorStorageManager
 import com.dvoroncov.arcore.data.models.AnchorModel
@@ -45,6 +47,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = RecyclerView.HORIZONTAL
+        modelsRecyclerView.layoutManager = linearLayoutManager
+        modelsRecyclerView.adapter = ModelsAdapter()
         createButton.setOnClickListener { onCreateButtonClick() }
         cancelButton.setOnClickListener { onCancelButtonClick() }
 
@@ -164,6 +170,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onCreateButtonClick() {
         cancelButton.visibility = View.VISIBLE
+        modelsRecyclerView.visibility = View.VISIBLE
         createButton.visibility = View.GONE
     }
 
@@ -176,6 +183,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onCancelButtonClick() {
         cancelButton.visibility = View.GONE
+        modelsRecyclerView.visibility = View.GONE
         creatingProgress.visibility = View.GONE
         createButton.visibility = View.VISIBLE
 

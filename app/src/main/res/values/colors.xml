@@ -3,4 +3,5 @@
     <color name="colorPrimary">#00E676</color>
     <color name="colorPrimaryDark">#00C853</color>
     <color name="colorAccent">#40bfff</color>
+    <color name="models_list_background">#5555</color>
 </resources>

@@ -42,8 +42,5 @@ class CloudAnchorStorageManager {
 
     companion object {
         private const val CLOUD_ANCHOR_LIST_KEY = "cloud_anchor_list"
-        private const val NEXT_SHORT_CODE = "next_short_code"
-        private const val KEY_PREFIX = "anchor;"
-        private const val INITIAL_SHORT_CODE = 0
     }
 }

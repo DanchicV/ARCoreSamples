@@ -1,4 +1,4 @@
-package com.dvoroncov.arcore.cloudAnchor
+package com.dvoroncov.arcore.presentation
 
 import com.google.ar.core.Config
 import com.google.ar.core.Session
