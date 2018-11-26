@@ -1,43 +1,47 @@
 package com.dvoroncov.arcore.data
 
-import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
+import com.dvoroncov.arcore.data.models.AnchorModel
+import com.google.firebase.database.*
 
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
-class CloudAnchorStorageManager(activity: Activity) {
+class CloudAnchorStorageManager {
 
-    private val preferences: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
+    var cloudAnchorModels = mutableListOf<AnchorModel>()
+
     private val reference: DatabaseReference
-
-    val nextShortCode: Int
-        get() {
-            val shortCode = preferences.getInt(NEXT_SHORT_CODE, INITIAL_SHORT_CODE)
-            preferences.edit()
-                    .putInt(NEXT_SHORT_CODE, shortCode + 1)
-                    .apply()
-            return shortCode
-        }
 
     init {
         val database = FirebaseDatabase.getInstance()
         reference = database.reference
+        loadCloudAnchorIDs()
     }
 
-    fun saveCloudAnchorID(shortCode: Int, cloudAnchorId: String) {
-        preferences.edit()
-                .putString(KEY_PREFIX + shortCode, cloudAnchorId)
-                .apply()
+    private fun loadCloudAnchorIDs() {
+        reference.child(CLOUD_ANCHOR_LIST_KEY)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(databaseError: DatabaseError) {
+                    }
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (postSnapshot in dataSnapshot.children) {
+                            val anchorModel = AnchorModel(postSnapshot.key!!, postSnapshot.value as String)
+                            if (!cloudAnchorModels.contains(anchorModel)) {
+                                cloudAnchorModels.add(anchorModel)
+                                RxBus.publish(RxBus.AddNewAnchor(anchorModel))
+                            }
+                        }
+                    }
+                })
     }
 
-    fun getCloudAnchorID(shortCode: Int): String? {
-        return preferences.getString(KEY_PREFIX + shortCode, "")
+    fun uploadCloudAnchorID(anchorModel: AnchorModel) {
+        cloudAnchorModels.add(anchorModel)
+        reference.child(CLOUD_ANCHOR_LIST_KEY)
+                .updateChildren(mutableMapOf(Pair(anchorModel.anchorId, anchorModel.model as Any)))
     }
 
     companion object {
-
+        private const val CLOUD_ANCHOR_LIST_KEY = "cloud_anchor_list"
         private const val NEXT_SHORT_CODE = "next_short_code"
         private const val KEY_PREFIX = "anchor;"
         private const val INITIAL_SHORT_CODE = 0
