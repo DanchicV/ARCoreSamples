@@ -1,4 +1,4 @@
-package com.dvoroncov.arcore_samples;
+package com.dvoroncov.arcore;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.dvoroncov.arcore_samples;
+package com.dvoroncov.arcore;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.dvoroncov.arcore_samples", appContext.getPackageName());
+        assertEquals("com.dvoroncov.arcore", appContext.getPackageName());
     }
 }

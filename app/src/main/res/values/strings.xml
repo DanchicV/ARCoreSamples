@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ARCoreSamples</string>
+    <string name="app_name">ARCoreSample</string>
 
     <string name="create">Создать</string>
     <string name="connect">Присоединиться</string>
