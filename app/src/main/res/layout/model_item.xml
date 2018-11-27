@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/modelImageView"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    android:adjustViewBounds="true"
-    android:src="@drawable/amenemhat" />
+    android:background="@drawable/model_item_selector"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_margin="8dp"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/modelImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="@drawable/model_item_selector"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:src="@drawable/amenemhat" />
+
+</FrameLayout>

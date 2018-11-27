@@ -9,7 +9,12 @@ import com.dvoroncov.arcore.R
 
 class ModelsAdapter : RecyclerView.Adapter<ModelsAdapter.ViewHolder>() {
 
-    var modelsImagesList = mutableListOf(R.drawable.amenemhat, R.drawable.model, R.drawable.planetary_crawler)
+    var modelsImagesList = mutableListOf(
+            R.drawable.amenemhat,
+            R.drawable.model,
+            R.drawable.planetary_crawler
+    )
+    var selectedModel = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -30,6 +35,11 @@ class ModelsAdapter : RecyclerView.Adapter<ModelsAdapter.ViewHolder>() {
 
         fun onBind(position: Int) {
             imageView.setImageDrawable(itemView.context.getDrawable(modelsImagesList[position]))
+            itemView.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    selectedModel = position
+                }
+            }
         }
     }
 }
