@@ -3,7 +3,6 @@ package com.dvoroncov.arcore.data
 import com.dvoroncov.arcore.data.models.AnchorModel
 import com.google.firebase.database.*
 
-
 class CloudAnchorStorageManager {
 
     var cloudAnchorModels = mutableListOf<AnchorModel>()

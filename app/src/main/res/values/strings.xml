@@ -7,4 +7,10 @@
 
     <string name="created">Создан: %1$d</string>
     <string name="connected">Подключен к %1$d</string>
+
+    <string-array name="models">
+        <item>amenemhat.sfb</item>
+        <item>model.sfb</item>
+        <item>planetary_crawler.sfb</item>
+    </string-array>
 </resources>

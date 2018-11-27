@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var node: TransformableNode? = null
     private var createdAnchor: Anchor? = null
     private var anchorNode: AnchorNode? = null
+    private var adapter = ModelsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = RecyclerView.HORIZONTAL
         modelsRecyclerView.layoutManager = linearLayoutManager
-        modelsRecyclerView.adapter = ModelsAdapter()
+        modelsRecyclerView.adapter = adapter
         createButton.setOnClickListener { onCreateButtonClick() }
         cancelButton.setOnClickListener { onCancelButtonClick() }
 
@@ -80,11 +81,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onTapArPlane(hitResult: HitResult) {
-        if (cancelButton.visibility == Button.VISIBLE) {
+        if (creatingProgress.visibility != Button.VISIBLE) {
+            val selectedModel = resources.getStringArray(R.array.models)[adapter.selectedModel]
             ModelRenderable.builder()
-                    .setSource(this, Uri.parse("amenemhat.sfb"))
+                    .setSource(this, Uri.parse(selectedModel))
                     .build()
-                    .thenAccept { modelRenderable -> createNewAnchor(hitResult, modelRenderable) }
+                    .thenAccept { modelRenderable -> createNewAnchor(hitResult, modelRenderable, selectedModel) }
                     .exceptionally {
                         val toast = Toast.makeText(this, "Unable to load amenemhat modelRenderable", Toast.LENGTH_LONG)
                         toast.setGravity(Gravity.CENTER, 0, 0)
@@ -94,19 +96,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createNewAnchor(hitResult: HitResult, modelRenderable: ModelRenderable) {
+    private fun createNewAnchor(hitResult: HitResult, modelRenderable: ModelRenderable, selectedModel: String) {
         this.modelRenderable = modelRenderable
         if (createdAnchor == null) {
             createdAnchor = (arFragment as CloudAnchorArFragment).session.hostCloudAnchor(hitResult.createAnchor())
             addNewAnchor(
                     createdAnchor!!,
-                    "amenemhat.sfb"
+                    selectedModel
             )
 
             cloudAnchorStateDisposable = Observable.interval(0, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext { checkCloudAnchorState() }
+                    .doOnNext { checkCloudAnchorState(selectedModel) }
                     .subscribe()
 
             creatingProgress.visibility = View.VISIBLE
@@ -150,14 +152,14 @@ class MainActivity : AppCompatActivity() {
                 }
     }
 
-    private fun checkCloudAnchorState() {
+    private fun checkCloudAnchorState(selectedModel: String) {
         val state = createdAnchor!!.cloudAnchorState
         if (state == Anchor.CloudAnchorState.SUCCESS) {
             cloudAnchorStateDisposable?.dispose()
 
             val cloudAnchorId = createdAnchor!!.cloudAnchorId
             showToast(state.toString() + ": " + cloudAnchorId)
-            cloudAnchorStorageManager.uploadCloudAnchorID(AnchorModel(cloudAnchorId, "amenemhat.sfb"))
+            cloudAnchorStorageManager.uploadCloudAnchorID(AnchorModel(cloudAnchorId, selectedModel))
 
             createdAnchor = null
             creatingProgress.visibility = View.GONE
